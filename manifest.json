@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Selective Regenerate AI",
+  "version": "1.0.0",
+  "description": "Bring Your Own Gemini API Key - Selectively regenerate parts of AI responses",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Selective Regenerate AI",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

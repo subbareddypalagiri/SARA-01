@@ -1,0 +1,16 @@
+{
+  "name": "selective-regenerate-ai",
+  "version": "3.0.0",
+  "description": "Backend for Selective Regenerate AI Chrome Extension",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1"
+  }
+}

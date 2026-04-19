@@ -1,0 +1,44 @@
+🐛 EVENT BUBBLING BUG - FIXED ✅
+
+ISSUE:
+When user clicked the custom instructions input field, the floating menu 
+would close unexpectedly. This prevented users from typing custom instructions.
+
+ROOT CAUSE:
+Click events on the input field were bubbling up to a document-level 
+listener that was designed to close the menu on outside clicks.
+
+THE FIX:
+Added event listeners to the input field to stop click event propagation:
+
+  customInput.addEventListener('mousedown', (e) => {
+    e.stopPropagation();  // Prevent bubbling
+  });
+
+  customInput.addEventListener('click', (e) => {
+    e.stopPropagation();  // Prevent bubbling
+  });
+
+Also improved the close handler to be more robust:
+  - Better Shadow DOM boundary checking
+  - Defensive try/catch to handle race conditions
+  - Verify menu still exists before removing
+
+RESULT:
+✅ Users can now click the input field without menu closing
+✅ Custom instructions input is fully functional
+✅ Outside clicks still close menu correctly
+✅ No breaking changes to existing functionality
+✅ All 5 architectural fixes remain active
+
+TESTING:
+1. Select text → click ✨ SRA → menu appears
+2. Click in custom input field → menu STAYS OPEN ✓
+3. Type instruction → text input works ✓
+4. Click Go → regeneration works ✓
+5. Click outside menu → menu CLOSES ✓
+
+FILES MODIFIED:
+- content.js (2 edits, 8 new lines)
+
+STATUS: Ready for production ✅

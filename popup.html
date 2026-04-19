@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selective Regenerate AI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      width: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    
+    h1 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .icon {
+      font-size: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    
+    input[type="password"]:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #4285f4;
+      box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-save {
+      background: #4285f4;
+      color: white;
+    }
+    
+    .btn-save:hover {
+      background: #3367d6;
+    }
+    
+    .btn-test {
+      background: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+    
+    .btn-test:hover {
+      background: #e8e8e8;
+    }
+    
+    .btn-clear {
+      background: #f5f5f5;
+      color: #d32f2f;
+      border: 1px solid #ddd;
+    }
+    
+    .btn-clear:hover {
+      background: #ffe8e8;
+    }
+    
+    .status {
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    
+    .status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+      display: block;
+    }
+    
+    .status.error {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #f5c6cb;
+      display: block;
+    }
+    
+    .status.info {
+      background: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #bbdefb;
+      display: block;
+    }
+    
+    .footer {
+      font-size: 12px;
+      color: #999;
+      text-align: center;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1><span class="icon">✨</span> Selective Regenerate AI</h1>
+    
+    <div id="status" class="status"></div>
+    
+    <div class="form-group">
+      <label for="apiKey">Gemini API Key</label>
+      <input
+        type="password"
+        id="apiKey"
+        placeholder="Enter your Gemini API key..."
+        autocomplete="off"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="modelSelect">Gemini Model</label>
+      <select id="modelSelect" style="width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background-color: white; cursor: pointer; transition: border-color 0.2s;">
+        <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash (Recommended)</option>
+      </select>
+      <small style="display: block; margin-top: 6px; color: #999; font-size: 12px;">
+        💡 Free tier users should use Gemini 2.5 Flash.
+      </small>
+    </div>
+    
+    <div class="button-group">
+      <button class="btn-save" id="saveBtn">Save Settings</button>
+      <button class="btn-test" id="testBtn">Test Connection</button>
+      <button class="btn-clear" id="clearBtn">Clear</button>
+    </div>
+    
+    <div class="footer">
+      Get your API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: #4285f4; text-decoration: none;">Google AI Studio</a>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

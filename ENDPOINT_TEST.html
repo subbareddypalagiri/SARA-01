@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRA - Endpoint Diagnostic Test</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        input.warning {
+            border-color: #ff9800;
+            background: #fff8f0;
+        }
+        input.error {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+        input.success {
+            border-color: #4caf50;
+            background: #f1f8f6;
+        }
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-test {
+            background: #667eea;
+            color: white;
+        }
+        .btn-test:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn-test:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-clear {
+            background: #f5f5f5;
+            color: #333;
+        }
+        .btn-clear:hover {
+            background: #e0e0e0;
+        }
+        .output {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .output.visible {
+            display: block;
+        }
+        .output-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 13px;
+        }
+        .output-content {
+            background: white;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #333;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .status.visible {
+            display: block;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .checklist {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .checklist h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #666;
+        }
+        .check-item:last-child {
+            margin-bottom: 0;
+        }
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .check-icon.pending {
+            background: #e0e0e0;
+            color: #999;
+        }
+        .check-icon.success {
+            background: #4caf50;
+            color: white;
+        }
+        .check-icon.error {
+            background: #f44336;
+            color: white;
+        }
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 SRA Endpoint Diagnostic</h1>
+        <p class="subtitle">Test your Gemini API key and verify the endpoint is working</p>
+
+        <div class="form-group">
+            <label for="apiKey">Gemini API Key (starts with AIza...)</label>
+            <input 
+                type="password" 
+                id="apiKey" 
+                placeholder="AIza..."
+                autocomplete="off"
+            >
+            <div class="checklist" style="margin-top: 10px;">
+                <h3>✓ Pre-flight Checks</h3>
+                <div class="check-item">
+                    <div class="check-icon pending" id="check1">?</div>
+                    <span id="check1-text">API key not entered yet</span>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon pending" id="check2">?</div>
+                    <span id="check2-text">Starts with 'AIza' (required)</span>
+                </div>
+                <div class="check-item">
+                    <div class="check-icon pending" id="check3">?</div>
+                    <span id="check3-text">Minimum length 39 characters</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-test" id="testBtn">🚀 Test Connection</button>
+            <button class="btn-clear" id="clearBtn">Clear</button>
+        </div>
+
+        <div class="status" id="status"></div>
+
+        <div class="output" id="output">
+            <div class="output-title">API Response</div>
+            <div class="output-content" id="outputContent"></div>
+        </div>
+
+        <div class="checklist" id="resultsChecklist" style="display: none;">
+            <h3>📊 Test Results</h3>
+            <div class="check-item">
+                <div class="check-icon pending" id="result1">?</div>
+                <span id="result1-text">Connecting to Gemini API...</span>
+            </div>
+            <div class="check-item">
+                <div class="check-icon pending" id="result2">?</div>
+                <span id="result2-text">Waiting for response...</span>
+            </div>
+            <div class="check-item">
+                <div class="check-icon pending" id="result3">?</div>
+                <span id="result3-text">Parsing response data...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiKeyInput = document.getElementById('apiKey');
+        const testBtn = document.getElementById('testBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const statusDiv = document.getElementById('status');
+        const outputDiv = document.getElementById('output');
+        const outputContent = document.getElementById('outputContent');
+        const resultsChecklist = document.getElementById('resultsChecklist');
+
+        // Pre-flight checks
+        apiKeyInput.addEventListener('input', () => {
+            const key = apiKeyInput.value.trim();
+            
+            // Check 1: Key entered
+            const check1 = document.getElementById('check1');
+            const check1Text = document.getElementById('check1-text');
+            if (key.length > 0) {
+                check1.className = 'check-icon success';
+                check1.textContent = '✓';
+                check1Text.textContent = 'API key entered';
+                apiKeyInput.classList.remove('warning', 'error');
+                apiKeyInput.classList.add('warning');
+            } else {
+                check1.className = 'check-icon pending';
+                check1.textContent = '?';
+                check1Text.textContent = 'API key not entered yet';
+                apiKeyInput.classList.remove('warning', 'error', 'success');
+            }
+
+            // Check 2: Starts with AIza
+            const check2 = document.getElementById('check2');
+            const check2Text = document.getElementById('check2-text');
+            if (key.startsWith('AIza')) {
+                check2.className = 'check-icon success';
+                check2.textContent = '✓';
+                check2Text.textContent = 'Starts with "AIza" ✓';
+            } else if (key.length > 0) {
+                check2.className = 'check-icon error';
+                check2.textContent = '✗';
+                check2Text.textContent = 'Must start with "AIza"';
+                apiKeyInput.classList.add('error');
+            } else {
+                check2.className = 'check-icon pending';
+                check2.textContent = '?';
+                check2Text.textContent = 'Starts with "AIza" (required)';
+            }
+
+            // Check 3: Length
+            const check3 = document.getElementById('check3');
+            const check3Text = document.getElementById('check3-text');
+            if (key.length >= 39) {
+                check3.className = 'check-icon success';
+                check3.textContent = '✓';
+                check3Text.textContent = `Length: ${key.length} characters ✓`;
+                apiKeyInput.classList.remove('error');
+                apiKeyInput.classList.add('success');
+                testBtn.disabled = false;
+            } else if (key.length > 0) {
+                check3.className = 'check-icon error';
+                check3.textContent = '✗';
+                check3Text.textContent = `Length: ${key.length}/39 (too short)`;
+                apiKeyInput.classList.add('error');
+                testBtn.disabled = true;
+            } else {
+                check3.className = 'check-icon pending';
+                check3.textContent = '?';
+                check3Text.textContent = 'Minimum length 39 characters';
+                testBtn.disabled = true;
+            }
+        });
+
+        testBtn.addEventListener('click', async () => {
+            const apiKey = apiKeyInput.value.trim();
+            
+            if (!apiKey.startsWith('AIza') || apiKey.length < 39) {
+                showStatus('⚠️ Invalid API key format', 'warning');
+                return;
+            }
+
+            testBtn.disabled = true;
+            statusDiv.textContent = '🔄 Testing connection...';
+            statusDiv.className = 'status visible info';
+            outputDiv.classList.remove('visible');
+            resultsChecklist.style.display = 'block';
+
+            try {
+                // Construct the exact endpoint
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+                const fullUrl = `${endpoint}?key=${encodeURIComponent(apiKey)}`;
+                
+                console.log('[DIAGNOSTIC] Testing endpoint:', endpoint);
+                console.log('[DIAGNOSTIC] Full URL with key:', fullUrl);
+
+                updateResult(1, 'sending');
+                const response = await fetch(fullUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: 'Say OK' }] }],
+                        generationConfig: { maxOutputTokens: 10 }
+                    })
+                });
+
+                updateResult(1, 'done');
+                updateResult(2, 'checking', `HTTP ${response.status}`);
+
+                const data = await response.json();
+                updateResult(2, 'done');
+                updateResult(3, 'checking');
+
+                // Display full response
+                outputContent.textContent = JSON.stringify(data, null, 2);
+                outputDiv.classList.add('visible');
+
+                // Analyze response
+                if (response.status === 200) {
+                    updateResult(3, 'done');
+                    showStatus('✅ API connection successful!', 'success');
+                    apiKeyInput.classList.add('success');
+                } else if (response.status === 404) {
+                    updateResult(3, 'error', 'Endpoint not found');
+                    showStatus('❌ 404 - Endpoint format might be incorrect. Check the URL format.', 'error');
+                } else if (response.status === 401) {
+                    updateResult(3, 'error', 'Unauthorized');
+                    showStatus('❌ 401 - API key is invalid or expired.', 'error');
+                } else if (response.status === 403) {
+                    updateResult(3, 'error', 'Forbidden');
+                    showStatus('❌ 403 - Gemini API might not be enabled. Check Google Cloud Console.', 'error');
+                } else if (response.status === 429) {
+                    updateResult(3, 'error', 'Rate limited');
+                    showStatus('⚠️ 429 - Quota exceeded. Wait 20-30 seconds and try again.', 'warning');
+                } else {
+                    updateResult(3, 'error', `HTTP ${response.status}`);
+                    showStatus(`❌ Unexpected status ${response.status}`, 'error');
+                }
+            } catch (error) {
+                updateResult(1, 'error', 'Network error');
+                showStatus(`❌ Network Error: ${error.message}`, 'error');
+                outputContent.textContent = `Error: ${error.message}\n\nMake sure:\n1. You have internet connection\n2. The URL is correct\n3. No proxy/firewall is blocking`;
+                outputDiv.classList.add('visible');
+            }
+
+            testBtn.disabled = false;
+        });
+
+        clearBtn.addEventListener('click', () => {
+            apiKeyInput.value = '';
+            apiKeyInput.classList.remove('warning', 'error', 'success');
+            statusDiv.classList.remove('visible');
+            outputDiv.classList.remove('visible');
+            resultsChecklist.style.display = 'none';
+            document.querySelectorAll('[id^="check"]').forEach(el => {
+                if (el.classList.contains('check-icon')) {
+                    el.className = 'check-icon pending';
+                    el.textContent = '?';
+                }
+            });
+            document.getElementById('check1-text').textContent = 'API key not entered yet';
+            document.getElementById('check2-text').textContent = 'Starts with "AIza" (required)';
+            document.getElementById('check3-text').textContent = 'Minimum length 39 characters';
+            testBtn.disabled = true;
+        });
+
+        function showStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status visible ${type}`;
+        }
+
+        function updateResult(num, state, text) {
+            const icon = document.getElementById(`result${num}`);
+            const textEl = document.getElementById(`result${num}-text`);
+            
+            if (state === 'sending') {
+                icon.innerHTML = '<span class="loading"></span>';
+                icon.className = 'check-icon info';
+                textEl.textContent = text || 'Sending request...';
+            } else if (state === 'checking') {
+                icon.innerHTML = '<span class="loading"></span>';
+                icon.className = 'check-icon info';
+                textEl.textContent = text || 'Checking response...';
+            } else if (state === 'done') {
+                icon.className = 'check-icon success';
+                icon.textContent = '✓';
+                textEl.textContent = text || 'Done';
+            } else if (state === 'error') {
+                icon.className = 'check-icon error';
+                icon.textContent = '✗';
+                textEl.textContent = text || 'Error';
+            }
+        }
+
+        // Allow Enter key to test
+        apiKeyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !testBtn.disabled) {
+                testBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
