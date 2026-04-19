@@ -40,28 +40,38 @@ async function regenerateWithGemini(text, instruction) {
       throw new Error('API Key is missing in storage.');
     }
 
-    // Build request with instruction + text
-    const fullPrompt = `Instructions: ${instruction}\n\nOriginal Text: "${text}"\n\nProvide ONLY the regenerated text. No conversational filler, no quotes.`;
-
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
 
     console.log('[SRA] Using model: gemini-2.5-flash');
     console.log('[SRA] Instruction:', instruction);
     console.log('[SRA] Fetching from: ' + url.split('key=')[0] + 'key=[REDACTED]');
 
-    // === API CALL: POST to Gemini v1beta ===
+    // === API CALL: POST to Gemini v1beta with elite copywriter system prompt ===
+    const payload = {
+      contents: [{
+        parts: [{
+          text: `You are an elite, world-class copywriter and editor. Your task is to process the user's text based on their specific instructions.
+
+STRICT RULES:
+1. Elevate the tone to sound highly professional, native, and engaging.
+2. Maintain the original core meaning and intent.
+3. DO NOT include any conversational filler, pleasantries, or formatting markers (like "Here is your text:" or markdown blocks).
+4. Output ONLY the final, polished text.
+
+User Instruction: ${instruction || "Improve and polish this text"}
+Original Text: ${text}`
+        }]
+      }],
+      generationConfig: {
+        temperature: 0.3,
+        maxOutputTokens: 2048
+      }
+    };
+
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: fullPrompt }]
-        }],
-        generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 2048
-        }
-      })
+      body: JSON.stringify(payload)
     });
 
     console.log('[SRA] API response status:', response.status);
