@@ -5,7 +5,7 @@
   "description": "Bring Your Own Gemini API Key - Selectively regenerate parts of AI responses",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": [
-    "https://chatgpt.com/*",
+    "<all_urls>",
     "https://generativelanguage.googleapis.com/*"
   ],
   "background": {
@@ -17,7 +17,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://chatgpt.com/*"],
+      "matches": ["<all_urls>"],
       "js": ["content.js"],
       "run_at": "document_end"
     }

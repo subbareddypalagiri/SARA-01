@@ -15,8 +15,9 @@ let isGenerating = false;
 let shadowRoot = null;
 
 // === INITIALIZATION ===
-document.addEventListener('mouseup', lockSelection);
-document.addEventListener('touchend', lockSelection);
+// Use capture phase to catch events before controlled sites can block them
+document.addEventListener('mouseup', lockSelection, { capture: true });
+document.addEventListener('touchend', lockSelection, { capture: true });
 
 // === SELECTION LOCKING (Ghost Selection Fix) ===
 function lockSelection() {
@@ -48,7 +49,7 @@ function showButton(selection) {
   button.id = 'sra-btn';
   button.textContent = '✨ SRA';
   button.style.cssText = `
-    position: fixed; z-index: 2147483647; padding: 8px 14px;
+    position: fixed; z-index: 2147483647 !important; padding: 8px 14px;
     background: linear-gradient(135deg, #4285f4, #3367d6); color: white;
     border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
     cursor: pointer; box-shadow: 0 2px 12px rgba(66,133,244,0.4);
@@ -97,7 +98,7 @@ function showPromptMenu(selection) {
   menu.id = 'sra-menu';
   menu.style.cssText = `
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    z-index: 2147483647; background: white; border-radius: 12px;
+    z-index: 2147483647 !important; background: white; border-radius: 12px;
     box-shadow: 0 12px 40px rgba(0,0,0,0.15); padding: 20px;
     min-width: 280px; animation: slideIn 0.2s ease;
   `;
@@ -272,7 +273,16 @@ function triggerRegeneration(instruction) {
           parent.dispatchEvent(new Event('input', { bubbles: true }));
           parent.dispatchEvent(new Event('change', { bubbles: true }));
 
-          showSuccess('✓ Text updated successfully!');
+          // Auto-copy to clipboard for universal website compatibility
+          navigator.clipboard.writeText(response.result)
+            .then(() => {
+              showToast('✅ Replaced & Copied to Clipboard!');
+            })
+            .catch(() => {
+              // Fallback: still show success even if copy fails
+              showSuccess('✓ Text updated successfully!');
+            });
+
           lockedText = '';
           lockedRange = null;
         } catch (error) {
@@ -293,7 +303,7 @@ function getShadowRoot() {
   if (!host) {
     host = document.createElement('div');
     host.id = 'sra-host';
-    host.style.cssText = 'all: initial; position: fixed; z-index: 2147483647;';
+    host.style.cssText = 'all: initial; position: fixed; z-index: 2147483647 !important;';
     document.body.appendChild(host);
   }
 
@@ -302,6 +312,7 @@ function getShadowRoot() {
     const style = document.createElement('style');
     style.textContent = `
       * { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+      #sra-btn, #sra-menu, #sra-loader { z-index: 2147483647 !important; }
     `;
     shadowRoot.appendChild(style);
   } else {
@@ -317,7 +328,7 @@ function showLoading() {
   loader.id = 'sra-loader';
   loader.style.cssText = `
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    z-index: 2147483647; background: white; padding: 32px; border-radius: 12px;
+    z-index: 2147483647 !important; background: white; padding: 32px; border-radius: 12px;
     box-shadow: 0 12px 40px rgba(0,0,0,0.15); text-align: center;
   `;
   loader.innerHTML = `
@@ -339,7 +350,7 @@ function showError(msg) {
   const shadow = getShadowRoot();
   const box = document.createElement('div');
   box.style.cssText = `
-    position: fixed; top: 20px; right: 20px; z-index: 2147483647;
+    position: fixed; top: 20px; right: 20px; z-index: 2147483647 !important;
     background: #ffebee; color: #c62828; padding: 16px; border-radius: 8px;
     border: 1px solid #ef5350; max-width: 420px; font-size: 13px;
   `;
@@ -352,13 +363,36 @@ function showSuccess(msg) {
   const shadow = getShadowRoot();
   const box = document.createElement('div');
   box.style.cssText = `
-    position: fixed; top: 20px; right: 20px; z-index: 2147483647;
+    position: fixed; top: 20px; right: 20px; z-index: 2147483647 !important;
     background: #e8f5e9; color: #2e7d32; padding: 16px; border-radius: 8px;
     border: 1px solid #66bb6a; font-size: 13px;
   `;
   box.textContent = msg;
   shadow.appendChild(box);
   setTimeout(() => box.remove(), 3500);
+}
+
+function showToast(msg) {
+  const shadow = getShadowRoot();
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed; bottom: 24px; right: 24px; z-index: 2147483647 !important;
+    background: #1a1a1a; color: #ffffff; padding: 14px 18px; border-radius: 6px;
+    font-size: 13px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    opacity: 1; transition: opacity 0.3s ease;
+  `;
+  toast.textContent = msg;
+  shadow.appendChild(toast);
+  
+  // Fade out and remove after 2.5 seconds
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => {
+      if (toast.parentNode === shadow) {
+        shadow.removeChild(toast);
+      }
+    }, 300);
+  }, 2500);
 }
 
 function escapeHtml(text) {
