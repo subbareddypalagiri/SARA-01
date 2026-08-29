@@ -1,41 +1,48 @@
-# SARA — Spot-fix And Regenerative Assist
+# SARA — Spot-fix And Regenerative Assist (Luxury Enterprise Edition)
 
-SARA is a productivity-focused browser extension designed to optimize user interactions with Generative AI platforms like ChatGPT, Google Gemini, and Anthropic Claude. By addressing the "80/20 output problem," SARA introduces surgical text regeneration, allowing users to refine specific portions of an LLM response without forcing a complete rewrite.
+**Bring Your Own Key (BYOK)** Chrome Extension for surgical, in-place AI response editing on **ChatGPT**, **Anthropic Claude**, and **Google Gemini** powered by Gemini 2.5 Flash.
 
----
-
-##  The Problem: The Re-prompting Trap
-In generative AI workflows, users are frequently satisfied with **80% of an AI's response** but need to adjust the remaining **20%**. 
-
-Currently, fixing that minor portion requires typing a new prompt and regenerating the entire response. This creates two distinct challenges:
-1. **UX Friction:** Prompt fatigue and disruption of the user's flow.
-2. **Compute Overhead:** Massive wastage of token consumption and server resources due to full-page redundant API calls.
-
-## 💡 The Solution: Surgical Precision
-SARA works as an overlay layer on top of your favorite LLM chats. Instead of re-prompting, you simply highlight the problematic text segment, click the SARA overlay, and choose a micro-regeneration action powered by the Gemini API.
+SARA is a productivity-focused browser extension designed to optimize user interactions with Generative AI platforms. By addressing the "80/20 output problem," SARA introduces surgical text regeneration, allowing users to refine specific portions of an LLM response without forcing a complete rewrite.
 
 ---
 
-##  Key Features
+## 🌟 Enterprise Features
 
-* **Improve:** Refines the tone and vocabulary of the highlighted segment while preserving the original context.
-* **Simplify:** Translates dense, complex technical terms or jargon into plain English instantly.
-* **Fix:** Corrects grammatical issues, code bugs, or factual formatting errors locally.
-* **Expand:** Instructs the AI to elaborate further on just that specific selected thought.
+### 1. 🪄 Universal Multi-Platform Support
+Works seamlessly across the top 3 major AI platforms:
+- **ChatGPT** (`chatgpt.com` / `chat.openai.com`)
+- **Anthropic Claude** (`claude.ai`)
+- **Google Gemini** (`gemini.google.com`)
+
+### 2. 🏛️ Classic Luxury Roman Theme & Vector Icons
+- Designed with high-end Editorial Ivory & Warm Espresso Brown palette.
+- Classic line SVGs: Vintage Feather Quill, Antique Pillar, Compass, Lamp, and Scroll.
+
+### 3. 💾 Universal Session Persistence & Auto-Rehydration
+- **Survives F5 Page Refresh:** When you refresh or navigate within a chat, the non-blocking **Rehydration Engine** automatically restores your edited sentences into the DOM.
+- Multi-paragraph cumulative character offset mapping engine ensures zero React Fiber crashes.
+
+### 4. 🔍 Git-Style Word-Level Visual Diff
+Review replacements before applying:
+- **Deletions:** Strikethrough in soft red (`<del>`)
+- **Additions:** Highlighted in crisp emerald green (`<ins>`)
+- Toggle instantly between **Visual Diff** and **Clean Preview**.
+
+### 5. ↩️ Non-Destructive Undo Floating Toast Pill
+- An elegant floating pill appears after every edit: `[Edit Applied] [Undo] [Close]`
+- 1-click instant rollback restores the exact original text and cleans the stored patch.
+
+### 6. ⚡ Keyboard-First Power Shortcut
+- Highlight any text and press **`Alt + S`** (or **`Option + S`** on macOS) to summon the prompt menu instantly under your cursor via native Chrome Commands.
+
+### 7. 🎭 Persona & Multi-Tone Quick Presets
+- **Quick Actions:** *Improve, Simplify, Fix Grammar, Expand*
+- **Tone & Persona:** *Executive (Business), Technical (Engineering), ELI5 (Simple), Bullets (Formatted)*
+- **Custom Instruction:** Free-form text input for bespoke prompts.
 
 ---
 
-## 🛠️ Tech Stack & Architecture
-
-* **Frontend Layer:** JavaScript (ES2022+), CSS3 (Custom UI Injection Layer)
-* **API Integration:** Chrome Extension Architecture (Manifest V3), Content Scripts, Background Service Workers
-* **AI Model:** Google Gemini API Integration
-
----
-
-#Installation & Developer Setup
-
-Since SARA is currently in active development / build-in-public phase, you can load it locally via Developer Mode:
+## 📦 Installation & Developer Setup
 
 ### Step 1: Get Your Gemini API Key
 1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey).
@@ -43,57 +50,53 @@ Since SARA is currently in active development / build-in-public phase, you can l
 
 ### Step 2: Clone the Repository
 ```bash
-git clone [https://github.com/YOUR_GITHUB_USERNAME/SARA.git](https://github.com/YOUR_GITHUB_USERNAME/SARA.git)
-cd SARA
+git clone https://github.com/subbareddypalagiri/SARA-01.git
+cd SARA-01
 ```
 
 ### Step 3: Load Extension in Chrome
 1. Open Google Chrome and navigate to `chrome://extensions/`.
 2. Toggle the **Developer mode** switch in the top-right corner to **ON**.
 3. Click the **Load unpacked** button in the top-left corner.
-4. Select the root folder of the cloned `SARA` repository.
+4. Select the root folder of this repository.
 
 ### Step 4: Configure API Key
 1. Click the **SARA** extension icon in your Chrome toolbar.
 2. Paste your Gemini API key into the input field.
-3. Click **Test Connection** to verify, then click **Save Key**.
+3. Click **Test Link** to verify, then click **Save Key**.
 
 ---
 
 ## 🎯 How To Use
 
-1. Navigate to your preferred AI chat platform (e.g., [ChatGPT](https://chatgpt.com)).
-2. Generate any response.
-3. **Highlight** any specific sentence or paragraph you wish to modify.
-4. Click the **✨ SARA** button that automatically appears near your cursor.
-5. Choose your action: **Improve**, **Simplify**, **Fix**, or **Expand**.
-6. Review the localized changes in the preview modal and click **Apply Changes** to update the text instantly.
+1. Navigate to your preferred AI chat platform ([ChatGPT](https://chatgpt.com), [Claude](https://claude.ai), or [Gemini](https://gemini.google.com)).
+2. Highlight any sentence or paragraph.
+3. Press **`Alt + S`** or click the **SRA** button near your cursor.
+4. Choose your action: **Improve**, **Simplify**, **Fix Grammar**, **Expand**, or select a **Persona Tone**.
+5. Review changes in the **Visual Diff Modal** and click **Apply Changes**!
 
 ---
 
 ## 📊 Metrics & Analytics (Value Validation)
 
-To quantify SARA's efficiency and business impact, the extension monitors key telemetry data (privacy-compliant) focused on compute optimization and user productivity:
-
 * **Token Economy Ratio (TER):** Reduces token consumption per refinement session by **65% - 80%** compared to full-page regeneration.
-* **Compute Cost Reduction Tracker:** Simulates backend API cost savings for enterprise layers by cutting down redundant prompt processing overhead on the server side.
-* **User Velocity Score (Time Saved):** Cuts down refinement workflow time from an average of ~45 seconds (typing + full generation) to **under 5 seconds** (an 88% speed improvement).
-* **Feature Conversion Analytics:** Localized event-tracking monitors which feature (*Improve*, *Simplify*, *Fix*, *Expand*) is utilized most, providing insights to continuously fine-tune the system prompts for maximum accuracy.
+* **Compute Cost Reduction:** Slashes redundant prompt processing overhead on the server side.
+* **User Velocity Score (Time Saved):** Cuts down refinement workflow time from an average of ~45 seconds to **under 5 seconds** (an 88% speed improvement).
 
 ---
 
-## 📉 Impact & Future Scope
-* **Efficiency:** Drastically reduces token usage per refinement session.
-* **UI/UX:** Solves prompt fatigue by transitioning text editing from a "command-line" prompting approach to a "point-and-click" interactive workflow.
-* **Roadmap:** Adding multi-language support and local LLM execution capabilities.
+## 🔒 Security & Privacy
+
+- **100% BYOK & Client-Side:** Your Gemini API key never leaves your local browser.
+- **Zero Telemetry:** No tracking, no external third-party analytics.
+- **Encrypted Local Storage:** Key is stored locally in `chrome.storage.local`.
 
 ---
 
-##  Connect With Me
-
-I am currently exploring opportunities in Product Management, Engineering Leadership, and AI/UX Development. If you find this project impressive, let's connect!
+## 📬 Connect With Me
 
 * **Developer:** Subba Reddy
 * **Phone:** +91 9493811060
 * **Email:** subbareddy123sub@gmail.com
-```
+* **GitHub:** [subbareddypalagiri](https://github.com/subbareddypalagiri)
+

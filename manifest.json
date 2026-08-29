@@ -1,8 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "Selective Regenerate AI",
+  "name": "SARA — Selective Regenerate AI",
   "version": "1.0.0",
-  "description": "Bring Your Own Gemini API Key - Selectively regenerate parts of AI responses",
+  "description": "Bring Your Own Gemini API Key — Selectively regenerate parts of AI responses on ChatGPT, Claude & Gemini",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": [
     "<all_urls>",
@@ -12,8 +18,14 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Selective Regenerate AI",
-    "default_popup": "popup.html"
+    "default_title": "SARA — Selective Regenerate AI",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "content_scripts": [
     {
@@ -22,6 +34,15 @@
       "run_at": "document_end"
     }
   ],
+  "commands": {
+    "trigger-sra": {
+      "suggested_key": {
+        "default": "Alt+S",
+        "mac": "Alt+S"
+      },
+      "description": "Trigger Selective Regenerate AI Prompt Menu"
+    }
+  },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   }

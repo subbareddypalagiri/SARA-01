@@ -1,7 +1,6 @@
 /**
- * Selective Regenerate AI - Popup Script
- * Handles API key configuration and model selection
- * Universal bridge for Gemini API
+ * Selective Regenerate AI (SRA) - Enterprise Popup Script
+ * Handles BYOK Gemini API key configuration and dynamic model routing
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (stored.selectedModel) {
     modelSelect.value = stored.selectedModel;
   } else {
-    // Default to Gemini 2.5 Flash
     modelSelect.value = 'gemini-2.5-flash';
   }
 
@@ -30,7 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const selectedModel = modelSelect.value;
     
     if (!apiKey) {
-      showStatus('Please enter an API key', 'error');
+      showStatus('Please enter a valid Gemini API key.', 'error');
       return;
     }
     
@@ -38,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       geminiApiKey: apiKey,
       selectedModel: selectedModel 
     });
-    showStatus(`✅ Settings saved! Using model: ${selectedModel}`, 'success');
+    showStatus(`Settings saved successfully! Active Model: ${selectedModel}`, 'success');
   });
 
   // Test connection with selected model
@@ -47,66 +45,51 @@ document.addEventListener('DOMContentLoaded', async () => {
     const selectedModel = modelSelect.value;
     
     if (!apiKey) {
-      showStatus('Please enter an API key first', 'error');
+      showStatus('Please enter an API key first.', 'error');
       return;
     }
 
     testBtn.disabled = true;
-    showStatus('🔄 Testing connection with ' + selectedModel + '...', 'info');
+    showStatus('Testing connection with Google Gemini endpoint...', 'info');
 
     try {
-      // Build URL with selected model (v1beta for 2.5-flash, v1 for others)
-      const endpoint = selectedModel === 'gemini-2.5-flash' ? 'v1beta' : 'v1';
-      const testUrl = `https://generativelanguage.googleapis.com/${endpoint}/models/${selectedModel}:generateContent?key=${encodeURIComponent(apiKey)}`;
-      
-      console.log(`[SRA Popup] Testing API key with model: ${selectedModel}`);
-      console.log(`[SRA Popup] Testing URL: https://generativelanguage.googleapis.com/${endpoint}/models/${selectedModel}:generateContent?key=[REDACTED]`);
+      const endpoint = selectedModel.includes('2.5') || selectedModel.includes('2.0') ? 'v1beta' : 'v1';
+      const testUrl = `https://generativelanguage.googleapis.com/${endpoint}/models/${encodeURIComponent(selectedModel)}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
       const response = await fetch(testUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           contents: [{ 
-            parts: [{ text: 'Say "OK" only.' }] 
+            parts: [{ text: 'Respond "CONNECTED" only.' }] 
           }],
           generationConfig: { 
             maxOutputTokens: 10,
-            temperature: 0.3
+            temperature: 0.2
           }
         })
       });
-
-      console.log('[SRA Popup] Response status:', response.status);
 
       if (response.ok) {
         await chrome.storage.local.set({ 
           geminiApiKey: apiKey,
           selectedModel: selectedModel 
         });
-        showStatus(`✅ Connection successful! Model "${selectedModel}" is working with your API key.`, 'success');
+        showStatus(`Connection verified! Model "${selectedModel}" is active and ready.`, 'success');
       } else if (response.status === 400) {
-        console.error('[SRA Popup] 400 Bad Request - Invalid API key or malformed request');
-        showStatus('❌ Invalid API key format or bad request. Check your credentials.', 'error');
-      } else if (response.status === 401) {
-        console.error('[SRA Popup] 401 Unauthorized - API key is invalid');
-        showStatus('❌ Invalid API key. Please check and try again.', 'error');
-      } else if (response.status === 403) {
-        console.error('[SRA Popup] 403 Forbidden - Access denied');
-        showStatus('❌ Access denied. Enable Generative Language API in Google Cloud Console.', 'error');
+        showStatus('Invalid API key format or malformed request.', 'error');
+      } else if (response.status === 401 || response.status === 403) {
+        showStatus('Invalid API key or access denied. Please verify your Google AI Studio key.', 'error');
       } else if (response.status === 404) {
-        console.error('[SRA Popup] 404 Not Found - Model not available for this key');
-        showStatus(`❌ Model "${selectedModel}" not found. This model may not be available on your API tier.`, 'error');
+        showStatus(`Model "${selectedModel}" is not available for this key. Try Gemini 1.5 Flash.`, 'error');
       } else if (response.status === 429) {
-        console.warn('[SRA Popup] 429 Too Many Requests - Quota exceeded');
-        showStatus('⏱️ Quota exceeded. Wait 20-30 seconds and try again.', 'error');
+        showStatus('Quota rate-limited. Please wait 20-30 seconds and test again.', 'error');
       } else {
         const data = await response.json();
-        console.error('[SRA Popup] Error response:', data);
-        showStatus(`❌ Error: ${data.error?.message || response.statusText}`, 'error');
+        showStatus(`Error (${response.status}): ${data.error?.message || response.statusText}`, 'error');
       }
     } catch (error) {
-      console.error('[SRA Popup] Network or fetch error:', error);
-      showStatus(`❌ Connection failed: ${error.message}`, 'error');
+      showStatus(`Connection failed: ${error.message}`, 'error');
     } finally {
       testBtn.disabled = false;
     }
@@ -120,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     apiKeyInput.value = '';
     modelSelect.value = 'gemini-2.5-flash';
-    showStatus('🗑️ Settings cleared. Reset to Gemini 2.5 Flash.', 'info');
+    showStatus('Settings cleared. Reset to default configuration.', 'info');
   });
 
   function showStatus(message, type) {
@@ -129,7 +112,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (type !== 'info') {
       setTimeout(() => {
         statusDiv.className = 'status';
-      }, 3500);
+      }, 4000);
     }
   }
 });
+
